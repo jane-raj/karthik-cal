@@ -1,0 +1,113 @@
+
+Frontend (React Native + Expo)
+Welcome Screen:
+Modern UI with light & dark mode toggle.
+Sign Up / Log In with email authentication (Supabase).
+Authentication:
+Users sign up/log in using Supabase Auth.
+After logging in, they are redirected to the AI Dashboard.
+Main Dashboard:
+AI-prioritized tasks (Gemini AI).
+Calorie & walking analytics (per minute tracking).
+Quick-add AI-powered task input via:
+Quick-add button.
+Chat-based AI input.
+Task Management:
+AI prioritizes tasks based on user habits & AI analysis.
+Users mark tasks as completed.
+AI provides habit-based task suggestions.
+Calorie Tracking:
+Users can upload food images or use the camera.
+App analyzes food images using Google Gemini AI API.
+Retrieves calorie & nutritional data via Edamam API.
+Tracks daily calorie intake.
+Provides food recommendations based on calorie intake.
+Walking Analytics:
+Tracks steps, distance, and calories burned.
+Provides weekly & monthly fitness insights.
+AI-powered walking goal recommendations.
+Fitness Chatbot powered by Gemini AI.
+Community Features:
+Users can post images & videos (max 20MB/video).
+Engage with likes, comments, and shares.
+Social & Nearby Friends:
+Detects nearby users walking, jogging, or exercising.
+Sends notifications for nearby activities.
+Encourages group fitness activities.
+Subscription Model:
+Stripe API for payments.
+Monthly subscription: $15/month.
+Yearly subscription: $30/year.
+Unlocks AI task management, calorie tracking, & community.
+Additional Features:
+User Profile: Edit details, preferences.
+Settings: Manage notifications & subscription.
+Dark Mode Toggle.
+
+Backend (Node.js + Express)
+User Authentication API:
+Handles Supabase authentication (email-based).
+AI Processing API:
+Routes user queries to Google Gemini AI API.
+Supports task prioritization & AI fitness chat.
+Task Management API:
+Stores user tasks & AI-generated priorities in Supabase.
+Allows task completion tracking.
+Calorie & Nutrition API:
+Processes food images using Gemini AI.
+Retrieves calorie data from Edamam API.
+Tracks daily nutritional intake.
+Walking Analytics API:
+Fetches daily step count & fitness insights.
+Suggests AI-powered walking goals.
+Community API:
+Manages posts, comments, and media uploads.
+Uses Supabase Storage for images & videos.
+Subscription API:
+Stripe API for secure payments.
+Stores subscription details in Supabase.
+Database (Supabase Postgres)
+
+Users Table:
+User ID, email, profile, subscription status.
+Tasks Table:
+User tasks, AI-prioritized status, completion tracking.
+Calorie Tracking Table:
+User ID, food images, AI calorie analysis, Edamam API data.
+Walking Stats Table:
+Steps, calories burned, weekly insights.
+Community Posts Table:
+User posts, media files (Supabase Storage).
+Subscription Table:
+User ID, subscription status, Stripe payment history.
+
+
+   myApp/
+   ├── app/                     # Main application directory
+   │   ├── auth/                # Authentication screens
+   │   │   ├── login.tsx        # Login screen
+   │   │   └── register.tsx     # Registration screen
+   │   ├── components/          # Reusable components
+   │   │   ├── subscription/     # Subscription related components
+   │   │   │   └── Subscription.tsx
+   │   │   └── ...              # Other reusable components
+   │   ├── dashboard/           # Dashboard related screens
+   │   │   └── Dashboard.tsx    # Dashboard screen
+   │   ├── screens/             # Other screens
+   │   │   ├── CalorieTracker.tsx # Calorie Tracker screen
+   │   │   └── ...              # Other screens
+   │   ├── context/             # Context API for state management
+   │   │   └── AuthContext.tsx  # Authentication context
+   │   ├── index.tsx            # Main entry point for the app
+   │   └── ...                  # Other app-related files
+   ├── docs/                    # Documentation
+   │   └── .cursorrules         # Project rules and guidelines
+   ├── src/                     # Source files (if needed)
+   │   ├── services/            # API services (e.g., Supabase, Stripe)
+   │   └── utils/               # Utility functions
+   ├── tsconfig.json            # TypeScript configuration
+   ├── package.json             # Project dependencies and scripts
+   └── babel.config.js          # Babel configuration
+
+
+   frontend ,backend and database with supabase and authentication and storage is supabase 
