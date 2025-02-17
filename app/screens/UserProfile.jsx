@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, Alert, StyleSheet, TextInput } from 'react-native';
-import { supabase } from '../services/supabase';
-import { useAuth } from '../context/AuthContext';
+import { supabase } from '../../src/services/supabase';
+import { useAuth } from '../../src/context/AuthContext';
 
 const UserProfile = () => {
   const { user } = useAuth();
@@ -9,13 +9,13 @@ const UserProfile = () => {
 
   useEffect(() => {
     if (user) {
-      setEmail(user.email);
+      setEmail(user.email || '');
     }
   }, [user]);
 
   const handleUpdateProfile = async () => {
     try {
-      const { error } = await supabase.auth.update({ email });
+      const { error } = await supabase.auth.updateUser({ email });
       if (error) throw error;
       Alert.alert('Success', 'Profile updated successfully!');
     } catch (error) {

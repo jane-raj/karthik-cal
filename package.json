@@ -16,6 +16,7 @@
     "body-parser": "^1.20.3",
     "component": "^1.1.0",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
     "expo": "^52.0.33",
     "expo-camera": "~16.0.16",
     "expo-constants": "~17.0.5",

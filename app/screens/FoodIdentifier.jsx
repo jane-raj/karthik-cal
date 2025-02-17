@@ -6,8 +6,8 @@ import { supabase } from '../../src/services/supabase';
 import { analyzeFoodImage } from '../../src/services/googleGeminiService'; // Adjust the path accordingly
 
 const FoodIdentifier = () => {
-    const [image, setImage] = useState<string | null>(null);
-    const [foodItem, setFoodItem] = useState<string | null>(null);
+    const [image, setImage] = useState(null);
+    const [foodItem, setFoodItem] = useState(null);
     const [cameraPermission, requestCameraPermission] = Camera.useCameraPermissions();
 
     useEffect(() => {
@@ -53,29 +53,18 @@ const FoodIdentifier = () => {
         }
     };
 
-    const identifyFood = async (imageUri: string) => {
+    const identifyFood = async (imageUri) => {
         try {
-            const response = await fetch('YOUR_BACKEND_API_URL/identify-food', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ image: imageUri }),
-            });
+            const analysisResult = await analyzeFoodImage(imageUri);
+            setFoodItem(analysisResult.foodItem);
+            Alert.alert('Success', 'Food image analyzed successfully!');
 
-            const data = await response.json();
-            if (response.ok) {
-                setFoodItem(data.foodItem);
+            const { error } = await supabase
+                .from('food_items')
+                .insert([{ name: analysisResult.foodItem }]);
 
-                const { error } = await supabase
-                    .from('food_items')
-                    .insert([{ name: data.foodItem }]);
-
-                if (error) {
-                    Alert.alert('Error', 'Failed to save food item to database.');
-                }
-            } else {
-                Alert.alert('Error', data.message || 'Failed to identify food.');
+            if (error) {
+                Alert.alert('Error', 'Failed to save food item to database.');
             }
         } catch (error) {
             Alert.alert('Error', error.message);

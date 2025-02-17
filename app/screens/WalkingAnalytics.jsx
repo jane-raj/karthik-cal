@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
-import { supabase } from '../services/supabase';
+import { supabase } from '../../src/services/supabase';
 
 const WalkingAnalytics = () => {
   const [steps, setSteps] = useState(0);
@@ -17,18 +17,22 @@ const WalkingAnalytics = () => {
 
       Alert.alert('Success', 'Walking data tracked successfully!');
     } catch (error) {
-      const errorMessage = (error as Error).message || 'An unknown error occurred';
+      const errorMessage = error.message || 'An unknown error occurred';
       Alert.alert('Tracking Error', errorMessage);
     }
   };
 
   const fetchWalkingStats = async () => {
-    const response = await fetch('http://localhost:5000/fetch-walking-stats');
-    const data = await response.json();
-    if (!response.ok) {
-      Alert.alert('Error fetching walking stats', data.error);
-    } else {
-      setWalkingStats(data);
+    try {
+      const response = await fetch('http://localhost:5000/fetch-walking-stats');
+      const data = await response.json();
+      if (!response.ok) {
+        Alert.alert('Error fetching walking stats', data.error);
+      } else {
+        setWalkingStats(data);
+      }
+    } catch (error) {
+      Alert.alert('Error', error.message);
     }
   };
 

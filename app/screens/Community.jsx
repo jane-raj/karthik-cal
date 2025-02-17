@@ -3,7 +3,7 @@ import { View, Text, Button, Alert, StyleSheet, FlatList, TextInput } from 'reac
 import { supabase } from '../../src/services/supabase'; // Corrected import
 
 const Community = () => {
-    const [posts, setPosts] = useState([]);
+    const [posts, setPosts] = useState([]); // Specify the type of posts
     const [newPost, setNewPost] = useState('');
 
     const fetchPosts = async () => {
@@ -11,7 +11,7 @@ const Community = () => {
         if (error) {
             Alert.alert('Error fetching posts', error.message);
         } else {
-            setPosts(data);
+            setPosts(data); // Now TypeScript knows data is of type Post[]
         }
     };
 

@@ -1,19 +1,17 @@
 import React, { useState } from 'react';
 import { View, Text, Button, Alert, StyleSheet } from 'react-native';
 import { useAuth } from '@/context/AuthContext';
-import { supabase } from '@/services/supabase'; // Ensure this path is correct
+import { supabase } from '@/services/supabase';
 
 const Subscription = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
 
-  const handleSubscribe = async (plan: 'monthly' | 'yearly') => {
+  const handleSubscribe = async (plan) => {
     if (!user) {
       Alert.alert('Error', 'You must be logged in to subscribe.');
       return;
     }
-
-    const userId = user.id;
 
     setLoading(true);
     const amount = plan === 'monthly' ? 1500 : 3000; // Amount in cents
@@ -32,14 +30,13 @@ const Subscription = () => {
 
       const { error: insertError } = await supabase
         .from('subscriptions')
-        .insert([{ user_id: userId, subscription_status: plan, stripe_payment_history: data }]);
+        .insert([{ user_id: user.id, subscription_status: plan, stripe_payment_history: data }]);
 
       if (insertError) throw insertError;
 
       Alert.alert('Success', 'Subscription successful!');
     } catch (error) {
-      const errorMessage = error.message || 'An unknown error occurred';
-      Alert.alert('Error', errorMessage);
+      Alert.alert('Error', error.message);
     } finally {
       setLoading(false);
     }
