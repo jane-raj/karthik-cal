@@ -7,8 +7,8 @@
     "name": "myApp",
     "slug": "myApp",
     "extra": {
-      "SUPABASE_URL": "https://your_supabase_url",
-      "SUPABASE_ANON_KEY": "your_supabase_anon_key"
+      "SUPABASE_URL": "https://vwsgtspvztdmoafwschx.supabase.co",
+      "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ3c2d0c3B2enRkbW9hZndzY2h4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk3Mjg4MTksImV4cCI6MjA1NTMwNDgxOX0.K74pyIy0-N5GKybMqqj7b0Hdr2Wp-f5X4DaRJgbeO0g"
     }
   }
 }

@@ -4,21 +4,33 @@ import { View, TextInput, Button, Text, Alert, StyleSheet } from 'react-native';
 const AIChat = () => {
   const [query, setQuery] = useState('');
   const [response, setResponse] = useState('');
+  const [loading, setLoading] = useState(false); // Loading state
 
   const handleQuery = async () => {
+    if (!query.trim()) {
+      Alert.alert('Error', 'Please enter a query.');
+      return;
+    }
+
+    setLoading(true); // Set loading to true when fetching starts
     try {
-      const res = await fetch('http://localhost:5000/ai-query', {
+      // Replace with your actual API endpoint and logic
+      const res = await fetch('http://localhost:5000/ai-query', { // Your API endpoint
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({ query }), // Sending the user's query
       });
+
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      if (!res.ok) throw new Error(data.error || 'Failed to fetch response');
+
       setResponse(data.answer); // Assuming the response contains an 'answer' field
     } catch (error) {
       Alert.alert('Error', error.message);
+    } finally {
+      setLoading(false); // Set loading to false when fetching ends
     }
   };
 
@@ -30,7 +42,7 @@ const AIChat = () => {
         onChangeText={setQuery}
         style={styles.input}
       />
-      <Button title="Send" onPress={handleQuery} />
+      <Button title={loading ? "Loading..." : "Send"} onPress={handleQuery} disabled={loading} />
       {response ? <Text style={styles.response}>{response}</Text> : null}
     </View>
   );

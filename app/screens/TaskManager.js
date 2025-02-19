@@ -5,13 +5,26 @@ import { supabase } from '../../src/services/supabase';
 const TaskManager = () => {
     const [tasks, setTasks] = useState([]); // Remove Task type
     const [newTask, setNewTask] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const fetchTasks = async () => {
-        const { data, error } = await supabase.from('tasks').select('*');
-        if (error) {
-            Alert.alert('Error fetching tasks', error.message);
-        } else {
+        setLoading(true);
+        try {
+            const { data, error } = await supabase
+                .from('tasks')
+                .select('*');
+
+            if (error) {
+                throw new Error(error.message);
+            }
+
+            console.log('Fetched tasks:', data);
             setTasks(data);
+        } catch (error) {
+            console.error('Error fetching tasks:', error);
+            Alert.alert('Error fetching tasks', error.message);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -44,12 +57,39 @@ const TaskManager = () => {
         }
     };
 
+    const handleUpdateTask = async (taskId, updatedContent) => { // New function to update a task
+        const { error } = await supabase
+            .from('tasks')
+            .update({ content: updatedContent }) // Update task content
+            .eq('id', taskId);
+        if (error) {
+            Alert.alert('Error updating task', error.message);
+        } else {
+            fetchTasks();
+            Alert.alert('Success', 'Task updated successfully!');
+        }
+    };
+
+    const handleDeleteTask = async (taskId) => { // New function to delete a task
+        const { error } = await supabase
+            .from('tasks')
+            .delete()
+            .eq('id', taskId);
+        if (error) {
+            Alert.alert('Error deleting task', error.message);
+        } else {
+            fetchTasks();
+            Alert.alert('Success', 'Task deleted successfully!');
+        }
+    };
+
     useEffect(() => {
         fetchTasks();
     }, []);
 
     return (
         <View style={styles.container}>
+            {loading && <Text>Loading tasks...</Text>}
             <TextInput
                 placeholder="Add a new task"
                 value={newTask}
@@ -63,7 +103,13 @@ const TaskManager = () => {
                 renderItem={({ item }) => (
                     <View style={styles.taskContainer}>
                         <Text style={{ textDecorationLine: item.completed ? 'line-through' : 'none' }}>{item.content}</Text>
-                        {!item.completed && <Button title="Complete" onPress={() => handleCompleteTask(item.id)} />}
+                        {!item.completed && (
+                            <>
+                                <Button title="Complete" onPress={() => handleCompleteTask(item.id)} />
+                                <Button title="Update" onPress={() => handleUpdateTask(item.id, 'New Content')} />
+                                <Button title="Delete" onPress={() => handleDeleteTask(item.id)} />
+                            </>
+                        )}
                     </View>
                 )}
             />

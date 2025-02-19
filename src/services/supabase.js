@@ -1,16 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 
+// Hardcode your Supabase URL and Anon Key here
+const supabaseUrl = 'https://vwsgtspvztdmoafwschx.supabase.co';
+const supabaseAnonKey = 'your_supabase_anon_key_here'; // Replace with your actual Anon Key
 
-let supabase;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-try {
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-    console.log('Missing Supabase environment variables');
-  } else {
-    supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  }
-} catch (error) {
-  console.log('Error initializing Supabase client:', error.message);
-}
-
-export { supabase };
+export { supabase }; // Export the single instance

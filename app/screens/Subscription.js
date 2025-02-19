@@ -1,45 +1,32 @@
 import React, { useState } from 'react';
 import { View, Text, Button, Alert, StyleSheet } from 'react-native';
-import { useAuth } from '@/context/AuthContext';
-import { supabase } from '@/services/supabase'; // Ensure this path is correct
+import { supabase } from '../../src/services/supabase';
+import axios from 'axios';
 
 const Subscription = () => {
-  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
 
-  const handleSubscribe = async (plan: 'monthly' | 'yearly') => {
-    if (!user) {
-      Alert.alert('Error', 'You must be logged in to subscribe.');
-      return;
-    }
-
-    const userId = user.id;
-
+  const handleSubscribe = async (plan) => {
     setLoading(true);
     const amount = plan === 'monthly' ? 1500 : 3000; // Amount in cents
 
     try {
-      const response = await fetch('http://localhost:5000/create-payment-intent', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ amount }),
+      const response = await axios.post('http://localhost:5000/create-payment-intent', {
+        amount,
       });
+      console.log('Payment Intent:', response.data);
 
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error);
-
+      // Store subscription details in Supabase
       const { error: insertError } = await supabase
         .from('subscriptions')
-        .insert([{ user_id: userId, subscription_status: plan, stripe_payment_history: data }]);
+        .insert([{ subscription_status: plan, stripe_payment_history: response.data }]);
 
       if (insertError) throw insertError;
 
       Alert.alert('Success', 'Subscription successful!');
     } catch (error) {
-      const errorMessage = error.message || 'An unknown error occurred';
-      Alert.alert('Error', errorMessage);
+      console.error('Error creating payment intent:', error);
+      Alert.alert('Error', error.message);
     } finally {
       setLoading(false);
     }

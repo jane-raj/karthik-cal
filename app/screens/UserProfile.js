@@ -1,17 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, Button, Alert, StyleSheet, TextInput } from 'react-native';
 import { supabase } from '../../src/services/supabase';
-import { useAuth } from '../../src/context/AuthContext';
 
 const UserProfile = () => {
-  const { user } = useAuth();
   const [email, setEmail] = useState('');
-
-  useEffect(() => {
-    if (user) {
-      setEmail(user.email || '');
-    }
-  }, [user]);
 
   const handleUpdateProfile = async () => {
     try {

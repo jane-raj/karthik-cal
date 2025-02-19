@@ -14,3 +14,4 @@ npx create-expo-app -e with-router
 # cal
 # cal-aa
 # karthik-cal
+# error_app

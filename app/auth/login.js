@@ -2,37 +2,17 @@ import React, { useState } from 'react';
 import { View, TextInput, Button, Alert, StyleSheet } from 'react-native';
 import { supabase } from '../../src/services/supabase';
 
-const Register = () => {
+const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleRegister = async () => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-
-    if (error) {
+  const handleLogin = async () => {
+    try {
+      const { user, error } = await supabase.auth.signIn({ email, password });
+      if (error) throw error;
+      Alert.alert('Success', 'Logged in successfully!');
+    } catch (error) {
       Alert.alert('Error', error.message);
-    } else {
-      const user = data.user;
-
-      // Check if user is null
-      if (!user) {
-        Alert.alert('Error', 'User registration failed. Please try again.');
-        return;
-      }
-
-      // Store user details in the users table
-      const { error: insertError } = await supabase
-        .from('users')
-        .insert([{ id: user.id, email: user.email || '', profile: {}, subscription_status: 'none' }]);
-
-      if (insertError) {
-        Alert.alert('Error', insertError.message);
-      } else {
-        Alert.alert('Success', 'User registered successfully!');
-      }
     }
   };
 
@@ -51,7 +31,7 @@ const Register = () => {
         secureTextEntry
         style={styles.input}
       />
-      <Button title="Register" onPress={handleRegister} />
+      <Button title="Login" onPress={handleLogin} />
     </View>
   );
 };
@@ -71,4 +51,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Register; 
+export default Login; // Ensure this is the default export

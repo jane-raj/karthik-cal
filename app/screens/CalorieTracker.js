@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert, StyleSheet, Image } from 'react-native';
+import { View, Text, Button, Alert, StyleSheet, Image, ActivityIndicator } from 'react-native';
 import { supabase } from '../../src/services/supabase';
 import { analyzeFoodImage } from '../../src/services/googleGeminiService';
 import { getNutritionData } from '../../src/services/deepSeekService';
@@ -9,17 +9,20 @@ import * as Camera from 'expo-camera';
 const CalorieTracker = () => {
   const [foodImage, setFoodImage] = useState(null);
   const [foodItem, setFoodItem] = useState(null);
-
-  // Use the hook at the top level of the component
+  const [loading, setLoading] = useState(false);
   const [permissionResponse] = Camera.useCameraPermissions();
 
   const handleUploadFoodImage = async () => {
+    setLoading(true);
+
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
+
+    setLoading(false);
 
     if (!result.canceled) {
       setFoodImage(result.assets[0].uri);
@@ -39,11 +42,15 @@ const CalorieTracker = () => {
       return;
     }
 
+    setLoading(true);
+
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
+
+    setLoading(false);
 
     if (!result.canceled) {
       setFoodImage(result.assets[0].uri);
@@ -59,35 +66,36 @@ const CalorieTracker = () => {
 
   const handleTrackCalories = async () => {
     if (!foodItem) {
-        Alert.alert('Error', 'Please identify a food item first.');
-        return;
+      Alert.alert('Error', 'Please identify a food item first.');
+      return;
     }
 
     try {
-        const nutritionData = await getNutritionData(foodItem);
-        const calorieCount = nutritionData.calories;
-        Alert.alert('Success', `Calories: ${calorieCount}`);
+      const nutritionData = await getNutritionData(foodItem);
+      const calorieCount = nutritionData.calories;
+      Alert.alert('Success', `Calories: ${calorieCount}`);
 
-        const { error } = await supabase
-            .from('calorie_tracking')
-            .insert([{ food_item: foodItem, calories: calorieCount }]);
+      const { error } = await supabase
+        .from('calorie_tracking')
+        .insert([{ food_item: foodItem, calories: calorieCount }]);
 
-        if (error) {
-            console.error('Supabase error:', error);
-            Alert.alert('Error', 'Failed to save calorie data.');
-        }
+      if (error) {
+        console.error('Supabase error:', error);
+        Alert.alert('Error', 'Failed to save calorie data.');
+      }
     } catch (error) {
-        console.error('Tracking Error:', error);
-        Alert.alert('Tracking Error', error.message);
+      console.error('Tracking Error:', error);
+      Alert.alert('Tracking Error', error.message);
     }
   };
 
   return (
     <View style={styles.container}>
-      <Button title="Take a Photo" onPress={takePhoto} />
-      <Button title="Upload Food Image" onPress={handleUploadFoodImage} />
+      <Button title="Take a Photo" onPress={takePhoto} disabled={loading} />
+      <Button title="Upload Food Image" onPress={handleUploadFoodImage} disabled={loading} />
       <Button title="Track Calories" onPress={handleTrackCalories} />
-      {foodImage && <Text>Food Image: {foodImage}</Text>}
+      {loading && <ActivityIndicator size="large" color="#0000ff" />}
+      {foodImage && <Image source={{ uri: foodImage }} style={styles.image} />}
     </View>
   );
 };
@@ -98,12 +106,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
   },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 10,
-    paddingHorizontal: 10,
+  image: {
+    width: 200,
+    height: 200,
+    marginVertical: 10,
   },
 });
 
